@@ -74,3 +74,84 @@ class MembranePlots(Visualization):
             f'{{responsive:true,displayModeBar:false}});</script>'
         )
         return {'html': html}
+
+
+class Membrane3D(Visualization):
+    """three.js-based 3D viewer for the membrane mesh.
+
+    Renders vertices + faces as a triangulated mesh, double-sided, with
+    optional wireframe overlay. Mouse-orbitable camera (drag to rotate,
+    scroll to zoom). Stores only the latest snapshot — a future
+    'timeline' version can scrub through accumulated frames.
+    """
+
+    config_schema = {
+        'title': {'_type': 'string', '_default': 'Membrane mesh'},
+        'wireframe': {'_type': 'boolean', '_default': False},
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._latest = None
+
+    def inputs(self):
+        return {
+            'vertices': 'list[list[float]]',   # Nx3 coordinates
+            'faces':    'list[list[integer]]', # Mx3 vertex indices
+        }
+
+    def update(self, state, interval=1.0):
+        self._latest = {
+            'vertices': state.get('vertices') or [],
+            'faces': state.get('faces') or [],
+        }
+        return {'html': self._render()}
+
+    def _render(self) -> str:
+        import json
+        title = (self.config or {}).get('title', 'Membrane mesh')
+        wireframe = bool((self.config or {}).get('wireframe', False))
+        data = self._latest or {'vertices': [], 'faces': []}
+        verts = data.get('vertices') or []
+        faces = data.get('faces') or []
+        # Pre-flatten for three.js BufferGeometry. Vertices are guaranteed
+        # 3D (Mem3DG); for safety we pad anything shorter to length 3.
+        positions_flat = [c for v in verts for c in (list(v) + [0.0, 0.0, 0.0])[:3]]
+        indices_flat = [int(i) for f in faces for i in list(f)[:3]]
+        data_json = json.dumps({'positions': positions_flat, 'indices': indices_flat})
+        return (
+            '<div id="viz" style="width:100%;height:480px;border:1px solid #e5e7eb;border-radius:4px"></div>'
+            '<script type="importmap">'
+            '{"imports": {"three": "https://unpkg.com/three@0.158.0/build/three.module.js",'
+            ' "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"}}'
+            '</script>'
+            '<script type="module">'
+            'import * as THREE from "three";'
+            'import { OrbitControls } from "three/addons/controls/OrbitControls.js";'
+            'const data = ' + data_json + ';'
+            'const container = document.getElementById("viz");'
+            'const renderer = new THREE.WebGLRenderer({antialias:true});'
+            'renderer.setSize(container.clientWidth, 480);'
+            'renderer.setClearColor(0xffffff, 1);'
+            'container.appendChild(renderer.domElement);'
+            'const scene = new THREE.Scene();'
+            'const camera = new THREE.PerspectiveCamera(60, container.clientWidth/480, 0.01, 1000);'
+            'camera.position.set(3, 3, 3);'
+            'const controls = new OrbitControls(camera, renderer.domElement);'
+            'scene.add(new THREE.AmbientLight(0xffffff, 0.5));'
+            'const sun = new THREE.DirectionalLight(0xffffff, 0.8);'
+            'sun.position.set(5,10,5);'
+            'scene.add(sun);'
+            'if (data.positions.length && data.indices.length) {'
+            '  const geom = new THREE.BufferGeometry();'
+            '  geom.setAttribute("position", new THREE.Float32BufferAttribute(data.positions, 3));'
+            '  geom.setIndex(data.indices);'
+            '  geom.computeVertexNormals();'
+            '  const mat = new THREE.MeshPhongMaterial({color: 0x60a5fa, side: THREE.DoubleSide, wireframe: ' + ('true' if wireframe else 'false') + '});'
+            '  scene.add(new THREE.Mesh(geom, mat));'
+            '}'
+            'function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }'
+            'animate();'
+            '</script>'
+            '<div style="font-size:0.85em;color:#6b7280;margin-top:4px">' + title + ' — drag to rotate, scroll to zoom</div>'
+        )

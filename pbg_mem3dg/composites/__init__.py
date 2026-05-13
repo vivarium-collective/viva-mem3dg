@@ -38,8 +38,9 @@ def register_mem3dg(core=None):
     core.register_link('Mem3DGProcess', Mem3DGProcess)
     core.register_link('ram-emitter', RAMEmitter)
     # Register Visualization Steps so composites can wire them by name.
-    from pbg_mem3dg.visualizations import MembranePlots
+    from pbg_mem3dg.visualizations import MembranePlots, Membrane3D
     core.register_link('MembranePlots', MembranePlots)
+    core.register_link('Membrane3D', Membrane3D)
     return core
 
 
@@ -93,6 +94,7 @@ def make_membrane_document(
             'inputs': {},
             'outputs': {
                 'vertex_positions': ['stores', 'vertex_positions'],
+                'faces': ['stores', 'faces'],
                 'mean_curvatures': ['stores', 'mean_curvatures'],
                 'total_energy': ['stores', 'total_energy'],
                 'bending_energy': ['stores', 'bending_energy'],

@@ -1,9 +1,9 @@
 name: membrane-demo-with-viz
-description: "Mem3DG membrane demo with a wired Visualization Step. Each update produces a Plotly HTML figure of the scalar energy/area/volume trajectories, written to the 'viz_html' store."
+description: "Mem3DG membrane demo with wired Visualization Steps. Each update produces a Plotly HTML figure of the scalar energy/area/volume trajectories (MembranePlots) and a three.js orbitable 3D mesh viewer (Membrane3D), each written to its own store."
 tags: [membranes, mechanics, geometry, demo, visualization]
 
 requires:
-  processes: [Mem3DGProcess, MembranePlots, RAMEmitter]
+  processes: [Mem3DGProcess, MembranePlots, Membrane3D, RAMEmitter]
 
 parameters:
   interval:
@@ -22,6 +22,10 @@ parameters:
     type: string
     default: "Mem3DG membrane relaxation"
     description: "Title displayed at the top of the Plotly figure."
+  viz_3d_title:
+    type: string
+    default: "Membrane mesh"
+    description: "Title for the three.js 3D mesh viewer."
 
 state:
   membrane:
@@ -41,6 +45,7 @@ state:
       surface_area: ["stores", "surface_area"]
       volume: ["stores", "volume"]
       vertex_positions: ["stores", "vertex_positions"]
+      faces: ["stores", "faces"]
       mean_curvatures: ["stores", "mean_curvatures"]
       converged: ["stores", "converged"]
     interval: "${interval}"
@@ -52,9 +57,11 @@ state:
     surface_area: 0.0
     volume: 0.0
     vertex_positions: []
+    faces: []
     mean_curvatures: []
     converged: false
     viz_html: ""
+    viz_3d_html: ""
   viz:
     _type: step
     address: "local:MembranePlots"
@@ -70,6 +77,16 @@ state:
       time: ["global_time"]
     outputs:
       html: ["stores", "viz_html"]
+  viz_membrane_3d:
+    _type: step
+    address: "local:Membrane3D"
+    config:
+      title: "${viz_3d_title}"
+    inputs:
+      vertices: ["stores", "vertex_positions"]
+      faces: ["stores", "faces"]
+    outputs:
+      html: ["stores", "viz_3d_html"]
   emitter:
     _type: step
     address: "local:RAMEmitter"

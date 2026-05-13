@@ -110,6 +110,7 @@ class Mem3DGProcess(Process):
     def outputs(self):
         return {
             'vertex_positions': 'overwrite[list]',
+            'faces': 'overwrite[list]',
             'mean_curvatures': 'overwrite[list]',
             'total_energy': 'overwrite[float]',
             'bending_energy': 'overwrite[float]',
@@ -125,8 +126,14 @@ class Mem3DGProcess(Process):
         energy = self._system.getEnergy()
         vertex = self._geometry.getVertexMatrix()
         H = self._geometry.getVertexMeanCurvatures()
+        # Face connectivity is invariant for the lifetime of a Mem3DG
+        # geometry (no remeshing in this wrapper), but emitting it on
+        # every step keeps the downstream wires (e.g. 3D mesh viewer)
+        # self-contained — they don't need a separate one-shot capture.
+        faces = self._geometry.getFaceMatrix().tolist()
         return {
             'vertex_positions': vertex.tolist(),
+            'faces': faces,
             'mean_curvatures': H.tolist(),
             'total_energy': float(energy.totalEnergy),
             'bending_energy': float(energy.spontaneousCurvatureEnergy),

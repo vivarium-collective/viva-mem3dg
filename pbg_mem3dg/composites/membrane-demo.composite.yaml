@@ -1,9 +1,9 @@
 name: membrane-demo
-description: "Minimal Mem3DG membrane mechanics demo: an icosphere relaxes under bending rigidity, surface tension, and osmotic pressure. Emits the scalar energy/area/volume trajectories each step."
-tags: [membranes, mechanics, geometry, demo]
+description: "Mem3DG membrane mechanics demo: an icosphere relaxes under bending rigidity, surface tension, and osmotic pressure. Bundles two Visualization Steps: MembranePlots (Plotly time-series of energies/area/volume) and Membrane3D (three.js orbitable mesh viewer)."
+tags: [membranes, mechanics, geometry, demo, visualization]
 
 requires:
-  processes: [Mem3DGProcess, RAMEmitter]
+  processes: [Mem3DGProcess, MembranePlots, Membrane3D, RAMEmitter]
 
 parameters:
   interval:
@@ -34,6 +34,14 @@ parameters:
     type: float
     default: 0.7
     description: "Fraction of initial volume used as the preferred-volume target."
+  viz_title:
+    type: string
+    default: "Mem3DG membrane relaxation"
+    description: "Title for the Plotly time-series figure."
+  viz_3d_title:
+    type: string
+    default: "Membrane mesh"
+    description: "Title for the three.js 3D mesh viewer."
 
 state:
   membrane:
@@ -57,6 +65,7 @@ state:
       surface_area: ["stores", "surface_area"]
       volume: ["stores", "volume"]
       vertex_positions: ["stores", "vertex_positions"]
+      faces: ["stores", "faces"]
       mean_curvatures: ["stores", "mean_curvatures"]
       converged: ["stores", "converged"]
     interval: "${interval}"
@@ -68,8 +77,36 @@ state:
     surface_area: 0.0
     volume: 0.0
     vertex_positions: []
+    faces: []
     mean_curvatures: []
     converged: false
+    viz_html: ""
+    viz_3d_html: ""
+  viz:
+    _type: step
+    address: "local:MembranePlots"
+    config:
+      title: "${viz_title}"
+    inputs:
+      total_energy: ["stores", "total_energy"]
+      bending_energy: ["stores", "bending_energy"]
+      surface_energy: ["stores", "surface_energy"]
+      pressure_energy: ["stores", "pressure_energy"]
+      surface_area: ["stores", "surface_area"]
+      volume: ["stores", "volume"]
+      time: ["global_time"]
+    outputs:
+      html: ["stores", "viz_html"]
+  viz_membrane_3d:
+    _type: step
+    address: "local:Membrane3D"
+    config:
+      title: "${viz_3d_title}"
+    inputs:
+      vertices: ["stores", "vertex_positions"]
+      faces: ["stores", "faces"]
+    outputs:
+      html: ["stores", "viz_3d_html"]
   emitter:
     _type: step
     address: "local:RAMEmitter"
