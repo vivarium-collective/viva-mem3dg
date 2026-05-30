@@ -7,7 +7,7 @@ name = "pbg-mem3dg"
 version = "0.1.0"
 description = "Process-bigraph wrapper for Mem3DG membrane mechanics simulator"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
     "process-bigraph>=0.0.10",
     "bigraph-schema",
