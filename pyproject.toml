@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pbg-mem3dg"
+name = "viva-mem3dg"
 version = "0.1.0"
 description = "Process-bigraph wrapper for Mem3DG membrane mechanics simulator"
 readme = "README.md"
