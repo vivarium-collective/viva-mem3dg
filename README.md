@@ -1,8 +1,8 @@
-# pbg-mem3dg
+# viva-mem3dg
 
 Process-bigraph wrapper for [Mem3DG](https://github.com/RangamaniLabUCSD/Mem3DG), a membrane mechanics simulator using discrete differential geometry on triangulated surface meshes.
 
-**[View Interactive Demo Report](https://vivarium-collective.github.io/pbg-mem3dg/)** -- osmotic deflation, membrane patch bulging, and tubular constriction with 3D mesh viewers, Plotly charts, and bigraph architecture diagrams.
+**[View Interactive Demo Report](https://vivarium-collective.github.io/viva-mem3dg/)** -- osmotic deflation, membrane patch bulging, and tubular constriction with 3D mesh viewers, Plotly charts, and bigraph architecture diagrams.
 
 ## What it does
 
