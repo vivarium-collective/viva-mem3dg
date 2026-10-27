@@ -1,0 +1,54 @@
+schema_version: 2
+name: membrane-mechanics-with-mem3dg
+title: Membrane mechanics with mem3dg
+created: '2026-10-27'
+status: planning
+question: TBD — what overarching question ties these studies together?
+hypothesis: TBD — what do we expect the composed studies to show?
+description: Scaffolded from 3 composite generator(s) via `investigation-from-wrapper`. Fill in the narrative.
+studies:
+- membrane-demo
+- membrane-patch
+- membrane-deflation
+executive:
+  what_is_this: TBD — one paragraph, for a reader who has never seen this.
+  verdict: TBD — fill in once studies are run.
+  verdict_status: in-progress
+  verdict_detail: TBD
+  decisions_needed: []
+  computed_verdict_status: passing-with-caveats
+  computed_acceptance:
+    criteria:
+    - study: membrane-demo
+      behavior: membrane-demo-behaves
+      result: passing-with-caveats
+    - study: membrane-patch
+      behavior: membrane-patch-behaves
+      result: passing-with-caveats
+    - study: membrane-deflation
+      behavior: membrane-deflation-behaves
+      result: passing-with-caveats
+    unmet:
+    - study: membrane-demo
+      behavior: membrane-demo-behaves
+      result: passing-with-caveats
+    - study: membrane-patch
+      behavior: membrane-patch-behaves
+      result: passing-with-caveats
+    - study: membrane-deflation
+      behavior: membrane-deflation-behaves
+      result: passing-with-caveats
+    diverges_from_authored: true
+scientific_argument:
+  main_claim: TBD — the one-sentence claim this investigation supports.
+  evidence_for: []
+  evidence_against: []
+  key_figures: []
+  caveats: []
+acceptance_criteria:
+- study: membrane-demo
+  behavior: membrane-demo-behaves
+- study: membrane-patch
+  behavior: membrane-patch-behaves
+- study: membrane-deflation
+  behavior: membrane-deflation-behaves

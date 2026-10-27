@@ -7,7 +7,7 @@ name = "viva-mem3dg"
 version = "0.1.0"
 description = "Process-bigraph wrapper for Mem3DG membrane mechanics simulator"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "process-bigraph>=0.0.10",
     "bigraph-schema",
@@ -17,9 +17,16 @@ dependencies = [
     "matplotlib",
     "scipy<1.15",
     "pyyaml",
+    "bigraph-viz>=2.0.3",
+    "jsonschema[format-nongpl]>=4.21",
+    "jinja2>=3.1",
+    "pypdf>=4.0",
+    "plotly",
+    "vivarium-workbench",
 ]
 
 [project.optional-dependencies]
+cli = ["typer", "rich"]
 dev = ["pytest", "bigraph-viz"]
 
 [tool.uv.sources]
@@ -30,3 +37,6 @@ include = ["pbg_mem3dg*"]
 
 [tool.setuptools.package-data]
 "pbg_mem3dg" = ["composites/*.yaml"]
+
+[project.scripts]
+viva-mem3dg = "pbg_mem3dg.cli.__main__:main"
