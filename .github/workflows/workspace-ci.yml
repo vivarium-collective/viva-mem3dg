@@ -81,6 +81,13 @@ jobs:
           # template-init.sh (">=3.12" -> "3.12", otherwise "3.11"). A
           # 3.12-only workspace must test on 3.12, not a hardcoded 3.11.
           python-version: "3.12"
+      - name: Install system deps for pymem3dg (built from source)
+        # pymem3dg ships only an sdist: it needs NetCDF C++ headers and, with
+        # CMake >= 4, a policy floor for its bundled pybind11.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnetcdf-c++4-dev libnetcdf-dev
+          echo "CMAKE_POLICY_VERSION_MINIMUM=3.5" >> "$GITHUB_ENV"
       - name: Install uv
         run: pip install uv
       - name: Set up venv and install
