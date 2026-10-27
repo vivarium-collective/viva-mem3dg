@@ -1,0 +1,103 @@
+schema_version: 4
+name: membrane-deflation
+title: Membrane deflation
+created: '2026-10-27'
+status: planned
+execution_status: planned
+verdict:
+phase: Design
+question: TBD — what question does this study answer?
+experiment: TBD — describe what pbg_mem3dg.composites.membrane-deflation is expected to demonstrate.
+description: Wraps the `pbg_mem3dg.composites.membrane-deflation` composite generator as a study. Fill in.
+baseline:
+- name: baseline
+  composite: pbg_mem3dg.composites.membrane-deflation
+  params:
+    interval: 1.0
+variants: []
+behavior_tests:
+- name: membrane-deflation-behaves
+  classification: primary
+  description: TBD — plain-language statement of the expected behavior.
+  measure:
+    kind: derived_scalar
+    field: TBD
+  pass_if:
+    op: <
+    value:
+  requires_simulation: baseline
+pipeline_gate:
+  prerequisites:
+  - study: membrane-patch
+    condition: tests-passed
+    relation: builds-on
+  enables: []
+  gate_evaluator:
+    result: blocked
+    blocked_by:
+    - membrane-deflation-behaves
+    evaluated_by: code
+    diverges_from_authored: false
+canonical_runs:
+- name: default
+  script: studies/membrane-deflation/sims/run.py
+  args: []
+  label: membrane-deflation
+  default: true
+visualizations:
+- name: membrane-deflation-world
+  view: world
+  status: stub
+  description: 'Fill in: the environment/state the study runs in.'
+- name: membrane-deflation-mechanism
+  view: mechanism
+  status: stub
+  description: 'Fill in: the mechanism/trajectory that drives the result.'
+- name: membrane-deflation-decision
+  view: decision
+  phase_map: true
+  grid_artifact: studies/membrane-deflation/grid/phase_map.parquet
+  status: stub
+  description: 'Fill in: phase map identifying PASS and FAILURE regions across a swept grid (not a single run). Built by sims/run.py''s grid sweep; persisted to grid_artifact.'
+findings: []
+confidence: Planned
+report:
+  verdict:
+result:
+runs:
+- name: pbg_mem3dg.composites.membrane-deflation__1793127625__3a2b97
+  status: completed
+  timestamp: 1793127627.8797598
+  emitter:
+    kind: unknown
+  env_id: 0acd0816b0aa0b69
+  params: '{"interval": 1.0}'
+  computed_outcomes:
+    membrane-deflation-behaves:
+      evaluated_by: agent
+      reason: observable 'TBD' not resolvable
+      reconcile: no_authored
+  provenance:
+    params:
+      interval:
+        value: 1.0
+        source: override
+      n_steps:
+        value: 30
+        source: resolved
+    params_captured_at: '2026-10-27'
+    params_source: dashboard-runner
+  outcomes:
+    membrane-deflation-behaves:
+      result: SKIP
+      evaluated_by: agent
+      note: observable 'TBD' not resolvable
+      auto_evaluated: true
+simulation_set:
+- name: baseline-baseline
+  kind: single
+  base_model: pbg_mem3dg.composites.membrane-deflation
+  is_baseline: true
+  status: ran
+  params:
+    interval: 1.0
