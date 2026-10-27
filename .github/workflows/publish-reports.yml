@@ -49,6 +49,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install system deps for pymem3dg (built from source)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnetcdf-c++4-dev libnetcdf-dev
+          echo "CMAKE_POLICY_VERSION_MINIMUM=3.5" >> "$GITHUB_ENV"
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
