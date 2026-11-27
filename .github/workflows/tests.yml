@@ -1,0 +1,46 @@
+name: tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The Mem3DG engine (pymem3dg) often cannot build on a vanilla Ubuntu
+      # runner (native CMake/C++ build). `import pbg_mem3dg` is lazy w.r.t.
+      # pymem3dg — the engine is imported only inside Process methods — so the
+      # import check and the pure-Python package tests run without it. The final
+      # fallback installs the package and its Python deps without the native
+      # engine so those still execute; engine-dependent tests then error on the
+      # missing pymem3dg, which is expected here.
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]" || python -m pip install -e . || {
+            echo "Full install failed (likely the native pymem3dg engine); installing without it.";
+            python -m pip install -e . --no-deps;
+            python -m pip install \
+              process-bigraph bigraph-schema numpy pyyaml matplotlib plotly "scipy<1.15" \
+              jsonschema jinja2 pypdf bigraph-viz pytest \
+              "viva-superpowers @ git+https://github.com/vivarium-collective/viva-superpowers.git@main";
+          }
+
+      - name: Import check
+        run: python -c "import pbg_mem3dg; print('pbg_mem3dg import OK')"
+
+      - name: Run tests
+        run: pytest -q
